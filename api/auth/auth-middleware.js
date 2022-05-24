@@ -23,8 +23,8 @@ function restricted(req, res, next) {
 */
 async function checkUsernameFree(req, res, next) {
   try{
-  const user = await Users.findBy({ username: req.body.username })
-    if(!user){
+  const users = await Users.findBy({ username: req.body.username })
+    if(!users.length){
       next()
     } else {
       next({
