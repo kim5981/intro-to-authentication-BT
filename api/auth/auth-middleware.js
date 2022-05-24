@@ -24,7 +24,8 @@ function restricted(req, res, next) {
 async function checkUsernameFree(req, res, next) {
   try{
   const users = await Users.findBy({ username: req.body.username })
-    if(!users.length){
+  // ^^ findBy returns an arary not a single user  
+  if(!users.length){
       next()
     } else {
       next({
@@ -45,8 +46,17 @@ async function checkUsernameFree(req, res, next) {
     "message": "Invalid credentials"
   }
 */
-function checkUsernameExists(req, res, next) {
-  next()
+async function checkUsernameExists(req, res, next) {
+  try{
+    const username = Users.findById({ username: req.body.username })
+    if(!username.length){
+      res.status(401).json({ message: "Invalid credentials"})
+    } else {
+      next()
+    }
+  } catch(err){
+    next()
+  }
 }
 
 /*
