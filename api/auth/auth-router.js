@@ -47,6 +47,10 @@ const router = require("express").Router()
   }
  */
 
+  router.post("/login", (req, res, next) => {
+    res.json("logged in")
+  })
+
 
 /**
   3 [GET] /api/auth/logout
@@ -64,6 +68,9 @@ const router = require("express").Router()
   }
  */
 
+  router.get("/logout", (req, res, next) => {
+    res.json("logged out")
+  })
  
 // Don't forget to add the router to the `exports` object so it can be required in other modules
 
