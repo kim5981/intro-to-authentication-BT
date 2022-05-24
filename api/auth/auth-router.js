@@ -2,6 +2,9 @@
 // middleware functions from `auth-middleware.js`. You will need them here!
 
 const router = require("express").Router()
+const bcrypt = require("bcryptjs")
+
+const User = require("../users/users-model")
 
 const { 
   restricted,
@@ -33,9 +36,22 @@ const {
   }
  */
 
-  router.post("/register", checkPasswordLength, checkUsernameFree, (req, res, next) => {
-    res.json("posting!")
-  })
+  router.post("/register", 
+   checkPasswordLength,
+   checkUsernameFree, 
+   (req, res, next) => {
+    const { username, password } = req.body
+  
+    //! hash before adding !!
+  const hash = bcrypt.hashSync(password, 10) // 2^10 times
+    
+  
+  User.add({ username, password: hash }) // <-- password stored as hash
+    .then(saved => {
+      res.json(saved)
+    })
+    .catch(next)
+})
 
 
 /**
