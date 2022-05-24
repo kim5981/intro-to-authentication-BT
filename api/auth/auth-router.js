@@ -7,7 +7,6 @@ const bcrypt = require("bcryptjs")
 const User = require("../users/users-model")
 
 const { 
-  restricted,
   checkUsernameFree,
   checkPasswordLength,
   checkUsernameExists 
@@ -41,10 +40,9 @@ const {
    checkUsernameFree, 
    (req, res, next) => {
     const { username, password } = req.body
-  
+
     //! hash before adding !!
   const hash = bcrypt.hashSync(password, 10) // 2^10 times
-    
   
   User.add({ username, password: hash }) // <-- password stored as hash
     .then(saved => {
@@ -71,7 +69,17 @@ const {
  */
 
   router.post("/login", checkUsernameExists, (req, res, next) => {
-    res.json("logged in")
+    const { password } = req.body
+    if  (bcrypt.compareSync( password, req.user.password )){
+
+      //! make it so the cookie is set on the client
+      //! and so server stores session w session ID 
+      req.session.user = req.user
+      res.json({ message: `Welcome ${req.user.username}` })
+
+    } else {
+      next({ status: 401, message: "Invalid credentials" })
+    }
   })
 
 

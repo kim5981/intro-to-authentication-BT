@@ -38,24 +38,17 @@ async function checkUsernameFree(req, res, next) {
   }
 }
 
-/*
-  If the username in req.body does NOT exist in the database
-
-  status 401
-  {
-    "message": "Invalid credentials"
-  }
-*/
 async function checkUsernameExists(req, res, next) {
   try{
-    const username = Users.findById({ username: req.body.username })
-    if(!username.length){
-      res.status(401).json({ message: "Invalid credentials"})
-    } else {
+    const users = await Users.findById({ username: req.body.username })
+    if(users.length){
+      req.user = users[0]
       next()
+    } else {
+      next({ status: 401, message: "Invalid credentials" })
     }
   } catch(err){
-    next()
+    next(err)
   }
 }
 
@@ -68,8 +61,8 @@ async function checkUsernameExists(req, res, next) {
   }
 */
 function checkPasswordLength(req, res, next) {
-  let { password } = req.body
-  if(!password || password.trim().length < 4){
+  const { password } = req.body
+  if(!password || password.trim().length < 3){
     next({ message: "Password must be longer than 3 chars", status: 422 })
   } else {
     next()

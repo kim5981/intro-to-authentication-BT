@@ -13,7 +13,6 @@ function find() {
  */
 function findBy(filter) {
   return db("users")
-  .select("user_id","username")
   .where(filter) // { username: "some data"}
 }
 
@@ -22,7 +21,7 @@ function findBy(filter) {
  */
 function findById(user_id) {
   return db("users")
-  .select("user_id","username")
+  .select("user_id", "username")
   .where("user_id", user_id).first()
 }
 
